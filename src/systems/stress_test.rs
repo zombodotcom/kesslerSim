@@ -52,13 +52,13 @@ pub struct StressTestConfig {
 impl Default for StressTestConfig {
     fn default() -> Self {
         Self {
-            target_objects: 10000,
+            target_objects: 2000, // Reduced from 10000 for better default performance
             current_objects: 0,
-            spawn_rate: 1000,
+            spawn_rate: 500, // Reduced spawn rate
             enabled: true,
-            target_leo: 8000,
+            target_leo: 1600,
             target_meo: 0,
-            target_geo: 2000,
+            target_geo: 400,
             current_leo: 0,
             current_meo: 0,
             current_geo: 0,
@@ -139,13 +139,13 @@ pub fn stress_test_spawn_system(
         );
     }
     if keyboard.just_pressed(KeyCode::Digit0) {
-        config.target_objects = 1000000;
-        config.target_leo = 800000;
-        config.target_meo = 100000;
-        config.target_geo = 100000;
-        config.spawn_rate = 5000;
+        config.target_objects = 20000; // Reduced from 1000000 - was completely unplayable
+        config.target_leo = 16000;
+        config.target_meo = 2000;
+        config.target_geo = 2000;
+        config.spawn_rate = 2000;
         info!(
-            "Target objects: {} (LEO: {}, MEO: {}, GEO: {})",
+            "Target objects: {} (LEO: {}, MEO: {}, GEO: {}) - WARNING: May cause low FPS",
             config.target_objects, config.target_leo, config.target_meo, config.target_geo
         );
     }
@@ -168,6 +168,15 @@ pub fn stress_test_spawn_system(
     }
 
     config.current_objects = config.current_leo + config.current_meo + config.current_geo;
+
+    // PERFORMANCE: Stop spawning if we have too many objects (hard cap)
+    const MAX_OBJECTS: usize = 100000;
+    if config.current_objects >= MAX_OBJECTS {
+        if config.current_objects == MAX_OBJECTS {
+            warn!("MAX OBJECT LIMIT REACHED: {} objects. Stopping spawn to prevent performance issues.", MAX_OBJECTS);
+        }
+        return; // Don't spawn more
+    }
 
     // Spawn objects if we haven't reached targets
     let mut spawned = 0;
@@ -283,6 +292,7 @@ fn spawn_orbital_satellite(commands: &mut Commands, orbit_type: OrbitType) {
         Satellite::new(format!("{:?} Satellite", orbit_type), 0, true),
         StressTestObject::new(orbit_type),
         RenderAsSatellite, // Render as green satellite
+        crate::components::trails::Trail::new(500, altitude as f64), // Add trail
     ));
 }
 
@@ -335,6 +345,31 @@ pub fn stress_test_cleanup_system(
         config.current_objects = 0;
         config.enabled = false;
         info!("Cleaned up {} stress test objects", count);
+    }
+}
+
+/// System to automatically stop spawning if FPS drops too low
+pub fn auto_stop_on_low_fps_system(
+    mut config: ResMut<StressTestConfig>,
+    time: Res<Time>,
+    existing_objects: Query<&StressTestObject>,
+) {
+    if !config.enabled {
+        return;
+    }
+
+    let fps = 1.0 / time.delta_secs();
+    let object_count = existing_objects.iter().count();
+
+    // If FPS is below 10 and we have >10k objects, stop spawning
+    if fps < 10.0 && object_count > 10000 {
+        if config.target_objects > object_count {
+            warn!("AUTO-STOP: FPS dropped to {:.1} with {} objects. Stopping spawn to prevent further performance degradation.", fps, object_count);
+            config.target_objects = object_count; // Stop spawning
+            config.target_leo = config.current_leo;
+            config.target_meo = config.current_meo;
+            config.target_geo = config.current_geo;
+        }
     }
 }
 

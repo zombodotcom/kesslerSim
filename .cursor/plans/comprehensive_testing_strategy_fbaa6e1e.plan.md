@@ -1,89 +1,3 @@
----
-name: Comprehensive Testing Strategy
-overview: Implement a comprehensive testing framework for the Kessler Syndrome Simulator covering unit tests, integration tests, property-based tests, and WASM-specific tests to ensure scientific accuracy, performance, and reliability.
-todos:
-  - id: setup_test_infrastructure
-    content: "Set up test infrastructure: create tests/common/mod.rs, add test dependencies to Cargo.toml (proptest, wasm-bindgen-test, approx, criterion)"
-    status: completed
-  - id: create_test_fixtures
-    content: "Create test fixtures: ISS.tle, hubble.tle, test_satellites.tle, and malformed.tle in tests/fixtures/"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-  - id: unit_tests_tle_parser
-    content: "Implement TLE parser unit tests: valid parsing, edge cases, error handling, exponential notation, multiple records"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-      - create_test_fixtures
-  - id: unit_tests_sgp4
-    content: "Implement SGP4 conversion tests: TLE to state vectors, Keplers equation, coordinate transforms, known satellite validation"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-      - create_test_fixtures
-  - id: unit_tests_physics
-    content: "Implement physics system tests: gravitational force, orbital velocity, energy calculations, Euler integration, energy conservation"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-  - id: unit_tests_collision
-    content: "Implement collision detection tests: octree insertion/querying, sphere-sphere detection, spatial partitioning, deduplication"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-  - id: unit_tests_debris
-    content: "Implement debris generation tests: NASA breakup model, mass conservation, velocity distribution, multi-generation tracking"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-  - id: unit_tests_analytics
-    content: "Implement analytics tests: energy binning, altitude bin assignment, statistics calculations"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-  - id: integration_tests
-    content: "Implement integration tests: full simulation cycles, collision cascades, data loading integration, system interactions"
-    status: completed
-    dependencies:
-      - unit_tests_tle_parser
-      - unit_tests_sgp4
-      - unit_tests_physics
-      - unit_tests_collision
-  - id: property_tests_energy
-    content: "Implement property-based energy conservation tests using proptest: total energy, energy scaling, potential/kinetic relationships"
-    status: completed
-    dependencies:
-      - unit_tests_physics
-  - id: property_tests_orbital
-    content: "Implement property-based orbital mechanics tests: period conservation, semi-major axis, eccentricity, angular momentum"
-    status: completed
-    dependencies:
-      - unit_tests_physics
-      - unit_tests_sgp4
-  - id: property_tests_collision
-    content: "Implement property-based collision detection tests: no false negatives/positives, octree correctness, pair uniqueness"
-    status: completed
-    dependencies:
-      - unit_tests_collision
-  - id: wasm_tests
-    content: "Implement WASM-specific tests: WASM compilation, function exports, memory management, browser compatibility"
-    status: completed
-    dependencies:
-      - setup_test_infrastructure
-  - id: wasm_performance_benchmarks
-    content: "Implement WASM performance benchmarks: physics system, collision detection, memory usage, frame time consistency"
-    status: completed
-    dependencies:
-      - wasm_tests
-  - id: update_readme_testing
-    content: "Update README.md with testing documentation: how to run tests, test coverage, testing strategy"
-    status: completed
-    dependencies:
-      - unit_tests_tle_parser
-      - integration_tests
----
-
 # Comprehensive Testing Strategy for Kessler Syndrome Simulator
 
 ## Overview
@@ -92,7 +6,7 @@ This plan establishes a complete testing framework for the web-based Kessler Syn
 
 ## Testing Architecture
 
-```mermaid
+````mermaid
 graph TD
     A[Test Suite] --> B[Unit Tests]
     A --> C[Integration Tests]
@@ -487,4 +401,5 @@ wasm-pack test --headless --firefox
 2. **Numerical Precision**: Use `approx` crate for floating-point comparisons
 3. **Property Testing**: Use `proptest` for generating test cases
 4. **Performance**: Benchmark critical paths (physics, collision detection)
-5. **Documentation**: Each test should explain what scientific principle it validates
+
+````

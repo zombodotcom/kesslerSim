@@ -1,13 +1,15 @@
 use bevy::prelude::*;
 use crate::components::*;
 use crate::resources::*;
+use crate::utils::integrators::*;
 
 /// Main physics system implementing 2-body orbital mechanics
 pub fn physics_system(
     mut orbital_query: Query<&mut OrbitalState>,
-    constants: Res<Constants>,
     mut sim_time: ResMut<SimulationTime>,
     time: Res<Time>,
+    integrator_config: Option<Res<IntegratorConfig>>,
+    constants: Res<Constants>,
 ) {
     // Update simulation time
     sim_time.advance(time.delta_secs());
@@ -19,56 +21,27 @@ pub fn physics_system(
 
     let dt = sim_time.timestep;
     let gm = constants.gravitational_parameter;
+    let use_rk4 = integrator_config.map(|c| c.use_rk4).unwrap_or(false);
 
     for mut orbital_state in orbital_query.iter_mut() {
-        // Work with f64 precision for physics calculations
-        let pos_x = orbital_state.position.x as f64;
-        let pos_y = orbital_state.position.y as f64;
-        let pos_z = orbital_state.position.z as f64;
-        
-        let vel_x = orbital_state.velocity.x as f64;
-        let vel_y = orbital_state.velocity.y as f64;
-        let vel_z = orbital_state.velocity.z as f64;
+        let (new_position, new_velocity) = if use_rk4 {
+            RK4Integrator::integrate(
+                orbital_state.position,
+                orbital_state.velocity,
+                dt,
+                gm,
+            )
+        } else {
+            EulerIntegrator::integrate(
+                orbital_state.position,
+                orbital_state.velocity,
+                dt,
+                gm,
+            )
+        };
 
-        // Calculate gravitational acceleration: a = -GM * r / |r|³
-        let r_magnitude_km = (pos_x * pos_x + pos_y * pos_y + pos_z * pos_z).sqrt();
-        let r_magnitude_m = r_magnitude_km * 1000.0; // Convert km to m
-        
-        if r_magnitude_m > 0.0 {
-            let acc_magnitude = -gm / (r_magnitude_m * r_magnitude_m);
-            
-            // Unit vector components
-            let r_unit_x = pos_x / r_magnitude_km;
-            let r_unit_y = pos_y / r_magnitude_km;
-            let r_unit_z = pos_z / r_magnitude_km;
-            
-            // Acceleration in km/s²
-            let acc_km_s2 = acc_magnitude / 1000.0;
-            let acc_x = r_unit_x * acc_km_s2;
-            let acc_y = r_unit_y * acc_km_s2;
-            let acc_z = r_unit_z * acc_km_s2;
-
-            // Simple Euler integration
-            let new_vel_x = vel_x + acc_x * dt;
-            let new_vel_y = vel_y + acc_y * dt;
-            let new_vel_z = vel_z + acc_z * dt;
-            
-            let new_pos_x = pos_x + new_vel_x * dt;
-            let new_pos_y = pos_y + new_vel_y * dt;
-            let new_pos_z = pos_z + new_vel_z * dt;
-
-            // Update orbital state
-            orbital_state.velocity = Vec3::new(
-                new_vel_x as f32,
-                new_vel_y as f32,
-                new_vel_z as f32,
-            );
-            orbital_state.position = Vec3::new(
-                new_pos_x as f32,
-                new_pos_y as f32,
-                new_pos_z as f32,
-            );
-        }
+        orbital_state.position = new_position;
+        orbital_state.velocity = new_velocity;
     }
 }
 

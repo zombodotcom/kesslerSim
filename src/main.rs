@@ -28,6 +28,15 @@ fn main() {
         .init_resource::<OrbitalDecayConfig>()
         .init_resource::<SatelliteSelection>()
         .init_resource::<systems::render_mode::RenderMode>()
+        .init_resource::<systems::gpu_physics::GpuPhysicsState>()
+        .init_resource::<components::trails::TrailConfig>()
+        .init_resource::<systems::ui::FpsHistory>()
+        .init_resource::<SimulationRecorder>()
+        .init_resource::<utils::integrators::IntegratorConfig>()
+        .insert_resource(systems::profiling::SystemProfiler::new(100))
+        .add_plugins(systems::gpu_instancing::GpuInstancingPlugin)
+        .add_plugins(systems::gpu_instancing_render::InstancedRenderPlugin)
+        .add_plugins(systems::gpu_physics::GpuPhysicsPlugin)
         .insert_resource(AmbientLight {
             color: Color::srgb(0.8, 0.9, 1.0),
             brightness: 0.15,
@@ -37,6 +46,8 @@ fn main() {
             setup_scene,
             initialize_tle_data_system,
             systems::materials::setup_materials_cache,
+            // systems::ui::setup_ui_system, // UI temporarily disabled - Bevy 0.16.1 API issues
+            systems::recording::setup_recording_directory,
         ))
         .add_systems(Update, (
             camera_control_system,
@@ -45,10 +56,12 @@ fn main() {
             systems::render_mode::update_render_mode,
         ))
         .add_systems(Update, (
+            systems::gpu_physics::gpu_physics_toggle_system,
             prepare_optimized_physics_system,
             optimized_physics_system,
             apply_optimized_physics_system,
             optimized_physics_monitor_system,
+            systems::gpu_physics::gpu_physics_readback_system,
         ))
         .add_systems(Update, (
             update_spatial_octree_system,
@@ -72,6 +85,7 @@ fn main() {
         .add_systems(Update, (
             stress_test_spawn_system,
             stress_test_cleanup_system,
+            systems::stress_test::auto_stop_on_low_fps_system,
             performance_comparison_system,
         ))
         .add_systems(Update, (
@@ -82,6 +96,32 @@ fn main() {
             satellite_selection_system,
             satellite_info_display_system,
             systems::hud::hud_log_system,
+        ))
+        .add_systems(Update, (
+            systems::trail_rendering::update_trail_system,
+            systems::trail_rendering::render_trails_system,
+            systems::trail_rendering::toggle_trails_system,
+            systems::trail_rendering::adjust_trail_length_system,
+        ))
+        .add_systems(Update, (
+            systems::ui::update_fps_history_system,
+            systems::ui::update_ui_stats_system,
+        ))
+        .add_systems(Update, (
+            systems::recording::record_simulation_system,
+        ))
+        .add_systems(Update, (
+            systems::particles::spawn_collision_particles_system,
+            systems::particles::update_particles_system,
+        ))
+        // Collision prediction temporarily disabled - causes crashes
+        // .add_systems(Update, (
+        //     systems::collision_prediction::predict_collisions_system,
+        //     systems::collision_prediction::visualize_collision_warnings_system,
+        // ))
+        .add_systems(Update, (
+            systems::profiling::profile_frame_system,
+            systems::profiling::log_performance_stats_system,
         ))
         .run();
 }

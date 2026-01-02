@@ -30,7 +30,7 @@ pub fn setup_materials_cache(
     let flash_material = materials.add(StandardMaterial {
         base_color: Color::srgba(1.0, 1.0, 0.8, 0.3),
         emissive: Color::srgb(10.0, 8.0, 5.0).into(),
-        alpha_mode: AlphaMode::Blend,
+        alpha_mode: bevy::render::alpha::AlphaMode::Blend,
         ..default()
     });
 

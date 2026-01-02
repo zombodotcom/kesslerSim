@@ -52,6 +52,7 @@ pub fn camera_control_system(
 }
 
 /// System to render satellites as small spheres
+/// OPTIMIZED: Uses GPU instancing when available, falls back to individual meshes
 pub fn satellite_rendering_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -61,11 +62,31 @@ pub fn satellite_rendering_system(
         (Entity, &OrbitalState, &Satellite),
         (With<RenderAsSatellite>, Without<RenderedObject>),
     >,
+    gpu_instances: Option<Res<crate::systems::gpu_instancing::SatelliteInstanceCount>>,
     mut satellite_counter: Local<usize>,
 ) {
     let total_satellites = satellites_without_mesh.iter().count();
-    let max_render = (total_satellites as f32 * render_mode.render_fraction) as usize;
+    
+    // If GPU instancing is active and we have instances, skip individual mesh creation
+    if let Some(instance_count) = gpu_instances {
+        if instance_count.0 > 0 {
+            // GPU instancing handles rendering - just mark objects as rendered
+            let max_render = (total_satellites as f32 * render_mode.render_fraction) as usize;
+            let mut count = 0;
+            for (entity, _orbital_state, _satellite) in satellites_without_mesh.iter() {
+                if count >= max_render {
+                    break;
+                }
+                commands.entity(entity).insert(RenderedObject);
+                count += 1;
+            }
+            *satellite_counter = total_satellites;
+            return; // Skip individual mesh creation
+        }
+    }
 
+    // Fallback: Individual mesh rendering (slower but works without GPU instancing)
+    let max_render = (total_satellites as f32 * render_mode.render_fraction) as usize;
     let mut count = 0;
     for (entity, orbital_state, _satellite) in satellites_without_mesh.iter() {
         if count >= max_render {
@@ -88,6 +109,7 @@ pub fn satellite_rendering_system(
 }
 
 /// System to render enhanced debris with visual effects
+/// OPTIMIZED: Uses GPU instancing when available, falls back to individual meshes
 pub fn debris_rendering_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -97,11 +119,31 @@ pub fn debris_rendering_system(
         (Entity, &OrbitalState, &EnhancedDebris),
         (With<RenderAsDebris>, Without<RenderedObject>),
     >,
+    gpu_instances: Option<Res<crate::systems::gpu_instancing::DebrisInstanceCount>>,
     mut debris_counter: Local<usize>,
 ) {
     let total_debris = debris_query.iter().count();
-    let max_render = (total_debris as f32 * render_mode.render_fraction) as usize;
+    
+    // If GPU instancing is active and we have instances, skip individual mesh creation
+    if let Some(instance_count) = gpu_instances {
+        if instance_count.0 > 0 {
+            // GPU instancing handles rendering - just mark objects as rendered
+            let max_render = (total_debris as f32 * render_mode.render_fraction) as usize;
+            let mut count = 0;
+            for (entity, _orbital_state, _enhanced_debris) in debris_query.iter() {
+                if count >= max_render {
+                    break;
+                }
+                commands.entity(entity).insert(RenderedObject);
+                count += 1;
+            }
+            *debris_counter = total_debris;
+            return; // Skip individual mesh creation
+        }
+    }
 
+    // Fallback: Individual mesh rendering (slower but works without GPU instancing)
+    let max_render = (total_debris as f32 * render_mode.render_fraction) as usize;
     let mut count = 0;
     for (entity, orbital_state, enhanced_debris) in debris_query.iter() {
         if count >= max_render {

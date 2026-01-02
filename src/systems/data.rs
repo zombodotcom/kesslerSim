@@ -397,6 +397,7 @@ fn spawn_satellite_entity(
     commands: &mut Commands,
     (tle_record, orbital_state): (TleRecord, OrbitalState),
 ) {
+    let altitude_km = orbital_state.altitude();
     commands.spawn((
         Satellite::new(tle_record.name.clone(), tle_record.norad_id, true),
         orbital_state,
@@ -409,6 +410,7 @@ fn spawn_satellite_entity(
         ),
         PhysicsObject::satellite(1000.0),
         RenderAsSatellite,
+        crate::components::trails::Trail::new(500, altitude_km), // Add trail with 500 point capacity
     ));
 }
 
