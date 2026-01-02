@@ -1,0 +1,35 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 11 tests
+test test_add_energy_measurement ... ok
+test test_altitude_bin_spacing ... ok
+test test_energy_measurement_aggregation ... ok
+test test_multiple_altitude_bins ... ok
+test test_energy_binning_edge_cases ... ok
+test test_energy_analytics_initialization ... FAILED
+test test_clear_measurements ... ok
+test test_get_altitude_bin ... ok
+test test_empty_bin_average ... ok
+test test_statistics_calculation ... ok
+test test_get_average_energy ... ok
+
+failures:
+
+---- test_energy_analytics_initialization stdout ----
+
+thread 'test_energy_analytics_initialization' panicked at tests\analytics_test.rs:32:5:
+assertion `left == right` failed: Last bin should be 2000km
+  left: 1950.0
+ right: 2000.0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    test_energy_analytics_initialization
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

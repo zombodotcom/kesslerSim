@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kessler Simulator - WASM Tests</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            padding: 20px;
+            margin: 0;
+        }
+        #output {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #444;
+            background-color: #2a2a2a;
+        }
+        .passed {
+            border-left-color: #4caf50;
+        }
+        .failed {
+            border-left-color: #f44336;
+        }
+        .summary {
+            background-color: #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #4caf50;
+        }
+        h3 {
+            color: #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div id="output">
+        <h2>WASM Test Runner</h2>
+        <div id="loading" style="color: #ff9800;">Loading WASM module...</div>
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        import init, { test_wasm_compilation, test_basic_calculations, test_cross_platform_compatibility, test_error_handling_wasm_compatible, test_wasm_safe_types } from './pkg/kessler_simulator.js';
+        
+        const output = document.getElementById('output');
+        const resultsDiv = document.getElementById('results');
+        const loadingDiv = document.getElementById('loading');
+        
+        let passed = 0;
+        let failed = 0;
+        
+        function addResult(testName, success, message) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${success ? 'passed' : 'failed'}`;
+            resultDiv.innerHTML = `
+                <strong>${success ? '✅' : '❌'} ${testName}</strong><br>
+                <span style="font-size: 0.9em; color: #aaa;">${message || (success ? 'PASSED' : 'FAILED')}</span>
+            `;
+            resultsDiv.appendChild(resultDiv);
+            
+            if (success) passed++;
+            else failed++;
+        }
+        
+        async function runTests() {
+            try {
+                await init();
+                loadingDiv.style.display = 'none';
+                
+                // Test 1: WASM compilation
+                try {
+                    test_wasm_compilation();
+                    addResult('test_wasm_compilation', true, 'WASM module loaded successfully');
+                } catch(e) {
+                    addResult('test_wasm_compilation', false, e.message);
+                }
+                
+                // Test 2: Basic calculations
+                try {
+                    test_basic_calculations();
+                    addResult('test_basic_calculations', true, 'Basic calculations working');
+                } catch(e) {
+                    addResult('test_basic_calculations', false, e.message);
+                }
+                
+                // Test 3: Cross-platform compatibility
+                try {
+                    test_cross_platform_compatibility();
+                    addResult('test_cross_platform_compatibility', true, 'Cross-platform types working');
+                } catch(e) {
+                    addResult('test_cross_platform_compatibility', false, e.message);
+                }
+                
+                // Test 4: Error handling
+                try {
+                    test_error_handling_wasm_compatible();
+                    addResult('test_error_handling_wasm_compatible', true, 'Error handling working');
+                } catch(e) {
+                    addResult('test_error_handling_wasm_compatible', false, e.message);
+                }
+                
+                // Test 5: WASM-safe types
+                try {
+                    test_wasm_safe_types();
+                    addResult('test_wasm_safe_types', true, 'WASM-safe types verified');
+                } catch(e) {
+                    addResult('test_wasm_safe_types', false, e.message);
+                }
+                
+                // Summary
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'summary';
+                summaryDiv.innerHTML = `
+                    <h3>Test Summary</h3>
+                    <p><strong>Total:</strong> ${passed + failed} tests</p>
+                    <p style="color: #4caf50;"><strong>Passed:</strong> ${passed}</p>
+                    <p style="color: #f44336;"><strong>Failed:</strong> ${failed}</p>
+                    <p><strong>Success Rate:</strong> ${((passed / (passed + failed) * 100).toFixed(1)}%</p>
+                `;
+                resultsDiv.appendChild(summaryDiv);
+                
+            } catch(e) {
+                loadingDiv.style.display = 'none';
+                addResult('WASM Initialization', false, `Failed to load WASM module: ${e.message}`);
+                console.error(e);
+            }
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kessler Syndrome Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+        }
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        .panel {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #0f0;
+            padding: 10px;
+            color: #0f0;
+        }
+        .top-left {
+            top: 10px;
+            left: 10px;
+        }
+        .top-right {
+            top: 10px;
+            right: 10px;
+        }
+        .bottom-center {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        .stat {
+            margin: 5px 0;
+        }
+        .label {
+            display: inline-block;
+            width: 150px;
+        }
+        .value {
+            font-weight: bold;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        button {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            pointer-events: auto;
+        }
+        button:hover {
+            background: rgba(0, 255, 0, 0.2);
+        }
+        button.danger {
+            border-color: #f00;
+            color: #f00;
+        }
+        button.danger:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+        #status {
+            color: #0ff;
+            margin-top: 10px;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #0f0;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="loading">Loading Kessler Simulator...</div>
+    <div id="hud" style="display: none;">
+        <div class="panel top-left">
+            <h1>KESSLER SIMULATOR</h1>
+            <p id="status">Initializing systems...</p>
+        </div>
+        <div class="panel top-right">
+            <div class="stat">
+                <span class="label">ACTIVE SATELLITES:</span>
+                <span id="sat-count" class="value">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">DEBRIS COUNT:</span>
+                <span id="debris-count" class="value">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">COLLISIONS:</span>
+                <span id="collision-count" class="value">0</span>
+            </div>
+        </div>
+        <div class="panel bottom-center">
+            <div class="controls">
+                <button id="btn-pause">Pause</button>
+                <button id="btn-speed-1x">1x</button>
+                <button id="btn-speed-60x">60x</button>
+                <button id="btn-speed-3600x">3600x</button>
+                <button id="btn-debris" class="danger">Trigger Kessler Event</button>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import init, { start } from './pkg/kessler_simulator.js';
+        
+        async function run() {
+            try {
+                await init();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('hud').style.display = 'block';
+                start();
+            } catch (e) {
+                console.error('Failed to initialize:', e);
+                document.getElementById('loading').textContent = 'Failed to load. Check console for errors.';
+            }
+        }
+        
+        run();
+    </script>
+</body>
+</html>

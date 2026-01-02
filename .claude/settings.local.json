@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wasm-pack --version:*)",
+      "Bash(curl:*)",
+      "Bash(sh:*)",
+      "Bash(wasm-pack build:*)",
+      "Bash(python:*)",
+      "Bash(cargo check:*)",
+      "Bash(bash:*)",
+      "Bash(cargo test:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}
