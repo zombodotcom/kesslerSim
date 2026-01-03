@@ -6278,7 +6278,6 @@ _**Agent (model default, mode Agent)**_
 
 ---
 
-
 Starting with the first todo: setting up the test infrastructure.
 
 
@@ -6327,7 +6326,6 @@ Starting with the first todo: setting up the test infrastructure.
 
 
 ---
-
 
 Setting up the test infrastructure, starting with the first todo.
 
@@ -6589,7 +6587,6 @@ d-----          1/2/2026   5:34 AM                fixtures
 
 ---
 
-
 Creating test fixtures:
 
 
@@ -6733,7 +6730,6 @@ Lines added: 12, lines removed: 1
 
 ---
 
-
 Fixing the test utilities and creating the TLE parser tests:
 
 
@@ -6766,7 +6762,6 @@ Fixing the test utilities and creating the TLE parser tests:
 
 
 ---
-
 
 Updating the test utilities and creating the TLE parser tests:
 
@@ -7124,7 +7119,6 @@ Lines added: 208, lines removed: 1
 
 
 ---
-
 
 Creating the SGP4 conversion tests:
 
@@ -7526,7 +7520,6 @@ Lines added: 349, lines removed: 1
 
 ---
 
-
 Creating the physics system tests:
 
 
@@ -7863,7 +7856,6 @@ Lines added: 301, lines removed: 1
 
 ---
 
-
 Creating the collision detection tests:
 
 
@@ -8179,7 +8171,6 @@ Lines added: 256, lines removed: 1
 
 ---
 
-
 Creating the debris generation tests:
 
 
@@ -8486,7 +8477,6 @@ Lines added: 248, lines removed: 1
 
 
 ---
-
 
 Fixing the debris test to match the actual structure, then creating the analytics tests:
 
@@ -8828,7 +8818,6 @@ Lines added: 254, lines removed: 1
 
 
 ---
-
 
 Creating integration tests. Continuing with the remaining test files:
 
@@ -9303,7 +9292,6 @@ Lines added: 154, lines removed: 1
 
 
 ---
-
 
 Creating property-based tests:
 
@@ -9829,7 +9817,6 @@ Lines added: 156, lines removed: 1
 
 ---
 
-
 Creating WASM tests and performance benchmarks:
 
 
@@ -10141,7 +10128,6 @@ Lines added: 144, lines removed: 1
 
 
 ---
-
 
 Updating the README with testing documentation:
 
@@ -10711,7 +10697,6 @@ Lint errors for `tests/collision_test.rs`
 
 ---
 
-
 Fixing module visibility so tests can access them. Checking the lib structure:
 
 
@@ -10752,7 +10737,6 @@ Fixing module visibility so tests can access them. Checking the lib structure:
 
 
 ---
-
 
 Making modules public in lib.rs so tests can access them:
 
@@ -10811,7 +10795,6 @@ Model performed no edit
 
 
 ---
-
 
 Fixing test imports to use the correct crate name. Checking Cargo.toml:
 
@@ -10973,7 +10956,6 @@ Lines added: 2, lines removed: 1
 
 ---
 
-
 Fixing test imports. Creating a test helper module and updating imports:
 
 
@@ -11054,117 +11036,12 @@ At C:\Users\zombo\AppData\Local\Temp\ps-script-f4354145-209d-4bd7-a145-cb490860c
 
 ---
 
-
 Running cargo check to identify compilation errors:
 
 
 ---
 
-<tool-use data-tool-type="shell" data-tool-name="run_terminal_cmd">
-<details><summary>Tool use: **run_terminal_cmd** • Run command: cargo check --tests 2>&1 | Select-Object -First 100</summary>
 
-```bash
-cargo check --tests 2>&1 | Select-Object -First 100
-```
-
-```
-cargo : warning: unused imports: &#96;Unit&#96; and &#96;Vector3&#96;
-At C:\Users\zombo\AppData\Local\Temp\ps-script-24014df0-f0d7-4773-99f1-5147404b00bf.ps1:86 char:1
-+ cargo check --tests 2&gt;&amp;1 | Select-Object -First 100
-+ ~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (warning: unused...&#96; and &#96;Vector3&#96;:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
- --&gt; src\components\orbital.rs:2:16
-  |
-2 | use nalgebra::{Vector3, Unit};
-  |                ^^^^^^^  ^^^^
-  |
-  = note: &#96;#[warn(unused_imports)]&#96; on by default
-warning: unused import: &#96;std::collections::HashMap&#96;
- --&gt; src\systems\collision.rs:5:5
-  |
-5 | use std::collections::HashMap;
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;crate::resources::*&#96;
- --&gt; src\systems\rendering.rs:5:5
-  |
-5 | use crate::resources::*;
-  |     ^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;crate::resources::*&#96;
- --&gt; src\systems\stress_test.rs:4:5
-  |
-4 | use crate::resources::*;
-  |     ^^^^^^^^^^^^^^^^^^^
-  |
-help: if this is a test module, consider adding a &#96;#[cfg(test)]&#96; to the containing module
- --&gt; src\systems\mod.rs:8:1
-  |
-8 | pub mod stress_test;
-  | ^^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;bevy::input::mouse::MouseButtonInput&#96;
- --&gt; src\systems\tracking_ui.rs:2:5
-  |
-2 | use bevy::input::mouse::MouseButtonInput;
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;components::*&#96;
-  --&gt; src\lib.rs:11:5
-   |
-11 | use components::*;
-   |     ^^^^^^^^^^^^^
-warning: use of deprecated method &#96;bevy::prelude::Query::&lt;'w, 's, D, F&gt;::get_single&#96;: Please use &#96;single&#96; instead
-  --&gt; src\systems\tracking_ui.rs:34:30
-   |
-34 |     let Ok(window) = windows.get_single() else {
-   |                              ^^^^^^^^^^
-   |
-   = note: &#96;#[warn(deprecated)]&#96; on by default
-warning: use of deprecated method &#96;bevy::prelude::Query::&lt;'w, 's, D, F&gt;::get_single&#96;: Please use &#96;single&#96; instead
-  --&gt; src\systems\tracking_ui.rs:38:55
-   |
-38 |     let Ok((camera, camera_transform)) = camera_query.get_single() else {
-   |                                                       ^^^^^^^^^^
-warning: use of deprecated method &#96;bevy::prelude::Query::&lt;'w, 's, D, F&gt;::get_single&#96;: Please use &#96;single&#96; instead
-   --&gt; src\systems\tracking_ui.rs:103:71
-    |
-103 |     if let Ok((orbital_state, satellite, tle_data)) = satellite_query.get_single() {
-    |                                                                       ^^^^^^^^^^
-warning: variable does not need to be mutable
-  --&gt; src\systems\data.rs:49:5
-   |
-49 |     mut tle_cache: ResMut&lt;TleDataCache&gt;,
-   |     ----^^^^^^^^^
-   |     |
-   |     help: remove this &#96;mut&#96;
-   |
-   = note: &#96;#[warn(unused_mut)]&#96; on by default
-warning: unused variable: &#96;physics1&#96;
-   --&gt; src\systems\collision.rs:245:34
-    |
-245 |         if let (Ok((_, orbital1, physics1, sat1)), Ok((_, orbital2, physics2, sat2))) =
-    |                                  ^^^^^^^^ help: if this is intentional, prefix it with an underscore: &#96;_physics1&#96;
-    |
-    = note: &#96;#[warn(unused_variables)]&#96; on by default
-warning: unused variable: &#96;physics2&#96;
-   --&gt; src\systems\collision.rs:245:69
-    |
-245 |         if let (Ok((_, orbital1, physics1, sat1)), Ok((_, orbital2, physics2, sat2))) =
-    |                                                                     ^^^^^^^^ help: if this is intentional, 
-prefix it with an underscore: &#96;_physics2&#96;
-warning: unused variable: &#96;i&#96;
-   --&gt; src\systems\collision.rs:276:17
-    |
-276 |             for i in 0..debris_pieces {
-    |                 ^ help: if this is intentional, prefix it with an underscore: &#96;_i&#96;
-warning: unused variable: &#96;time&#96;
-  --&gt; src\systems\rendering.rs:90:5
-   |
-90 |     time: Res&lt;Time&gt;,
-   |     ^^^^ help: if this is intentional, prefix it with an underscore: &#96;_time&#96;
-
-```
-</details>
-</tool-use>
 
 ---
 
@@ -12495,7 +12372,6 @@ _**Agent (model default, mode Agent)**_
 
 ---
 
-
 Fixing compilation errors systematically:
 
 
@@ -13393,111 +13269,7 @@ Lines added: undefined, lines removed: 2
 
 ---
 
-<tool-use data-tool-type="shell" data-tool-name="run_terminal_cmd">
-<details><summary>Tool use: **run_terminal_cmd** • Run command: cargo test --lib 2>&1 | Select-Object -First 100</summary>
 
-```bash
-cargo test --lib 2>&1 | Select-Object -First 100
-```
-
-```
-cargo :    Compiling kessler-simulator v0.1.0 (C:\Users\zombo\Desktop\Programming\kesslerSim)
-At C:\Users\zombo\AppData\Local\Temp\ps-script-87612240-0d30-4e8c-8070-214ec474b31d.ps1:7 char:1
-+ cargo test --lib 2&gt;&amp;1 | Select-Object -First 100
-+ ~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (   Compiling ke...ing\kesslerSim):String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-warning: unused imports: &#96;Unit&#96; and &#96;Vector3&#96;
- --&gt; src\components\orbital.rs:2:16
-  |
-2 | use nalgebra::{Vector3, Unit};
-  |                ^^^^^^^  ^^^^
-  |
-  = note: &#96;#[warn(unused_imports)]&#96; on by default
-warning: unused import: &#96;std::collections::HashMap&#96;
- --&gt; src\systems\collision.rs:5:5
-  |
-5 | use std::collections::HashMap;
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;crate::resources::*&#96;
- --&gt; src\systems\rendering.rs:5:5
-  |
-5 | use crate::resources::*;
-  |     ^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;crate::resources::*&#96;
- --&gt; src\systems\stress_test.rs:4:5
-  |
-4 | use crate::resources::*;
-  |     ^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;bevy::input::mouse::MouseButtonInput&#96;
- --&gt; src\systems\tracking_ui.rs:2:5
-  |
-2 | use bevy::input::mouse::MouseButtonInput;
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-warning: unused import: &#96;components::*&#96;
-  --&gt; src\lib.rs:11:5
-   |
-11 | use components::*;
-   |     ^^^^^^^^^^^^^
-warning: use of deprecated method &#96;bevy::prelude::Query::&lt;'w, 's, D, F&gt;::get_single&#96;: Please use &#96;single&#96; instead
-  --&gt; src\systems\tracking_ui.rs:34:30
-   |
-34 |     let Ok(window) = windows.get_single() else {
-   |                              ^^^^^^^^^^
-   |
-   = note: &#96;#[warn(deprecated)]&#96; on by default
-warning: use of deprecated method &#96;bevy::prelude::Query::&lt;'w, 's, D, F&gt;::get_single&#96;: Please use &#96;single&#96; instead
-  --&gt; src\systems\tracking_ui.rs:38:55
-   |
-38 |     let Ok((camera, camera_transform)) = camera_query.get_single() else {
-   |                                                       ^^^^^^^^^^
-warning: use of deprecated method &#96;bevy::prelude::Query::&lt;'w, 's, D, F&gt;::get_single&#96;: Please use &#96;single&#96; instead
-   --&gt; src\systems\tracking_ui.rs:103:71
-    |
-103 |     if let Ok((orbital_state, satellite, tle_data)) = satellite_query.get_single() {
-    |                                                                       ^^^^^^^^^^
-warning: variable does not need to be mutable
-  --&gt; src\systems\data.rs:49:5
-   |
-49 |     mut tle_cache: ResMut&lt;TleDataCache&gt;,
-   |     ----^^^^^^^^^
-   |     |
-   |     help: remove this &#96;mut&#96;
-   |
-   = note: &#96;#[warn(unused_mut)]&#96; on by default
-warning: unused variable: &#96;physics1&#96;
-   --&gt; src\systems\collision.rs:247:34
-    |
-247 |         if let (Ok((_, orbital1, physics1, sat1)), Ok((_, orbital2, physics2, sat2))) =
-    |                                  ^^^^^^^^ help: if this is intentional, prefix it with an underscore: &#96;_physics1&#96;
-    |
-    = note: &#96;#[warn(unused_variables)]&#96; on by default
-warning: unused variable: &#96;physics2&#96;
-   --&gt; src\systems\collision.rs:247:69
-    |
-247 |         if let (Ok((_, orbital1, physics1, sat1)), Ok((_, orbital2, physics2, sat2))) =
-    |                                                                     ^^^^^^^^ help: if this is intentional, 
-prefix it with an underscore: &#96;_physics2&#96;
-warning: unused variable: &#96;i&#96;
-   --&gt; src\systems\collision.rs:278:17
-    |
-278 |             for i in 0..debris_pieces {
-    |                 ^ help: if this is intentional, prefix it with an underscore: &#96;_i&#96;
-warning: unused variable: &#96;time&#96;
-  --&gt; src\systems\rendering.rs:90:5
-   |
-90 |     time: Res&lt;Time&gt;,
-   |     ^^^^ help: if this is intentional, prefix it with an underscore: &#96;_time&#96;
-warning: variable does not need to be mutable
-   --&gt; src\systems\rendering.rs:101:13
-    |
-101 |         let mut base_color = enhanced_debris.color_tint;
-    |             ----^^^^^^^^^^
-
-```
-</details>
-</tool-use>
 
 ---
 
