@@ -35,7 +35,7 @@ fn main() {
         .init_resource::<utils::integrators::IntegratorConfig>()
         .insert_resource(systems::profiling::SystemProfiler::new(100))
         .add_plugins(systems::gpu_instancing::GpuInstancingPlugin)
-        .add_plugins(systems::gpu_instancing_render::InstancedRenderPlugin)
+        .add_plugins(systems::simple_gpu_render::SimpleGpuRenderPlugin)
         .add_plugins(systems::gpu_physics::GpuPhysicsPlugin)
         .insert_resource(AmbientLight {
             color: Color::srgb(0.8, 0.9, 1.0),

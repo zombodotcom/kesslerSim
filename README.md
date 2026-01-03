@@ -1,4 +1,60 @@
-# Kessler Syndrome Simulator (Web)
+# Kessler Syndrome Simulator
+
+## Quick Development Commands
+
+### Fast Testing Workflow
+
+**Windows (PowerShell):**
+```powershell
+# Quick compile check (fastest feedback)
+.\scripts\dev.ps1 check
+
+# Watch for changes and auto-check
+.\scripts\dev.ps1 watch
+
+# Run tests
+.\scripts\dev.ps1 test
+
+# Run the app
+.\scripts\dev.ps1 run
+```
+
+**Linux/Mac (Make):**
+```bash
+# Quick compile check
+make check
+
+# Watch for changes
+make watch
+
+# Run tests
+make test
+
+# Run the app
+make run
+```
+
+**Direct Cargo Commands (Fastest):**
+```bash
+# Quick check (skips codegen, very fast)
+cargo check
+
+# Run specific test
+cargo test --lib test_name
+
+# Check with output filtering
+cargo check 2>&1 | grep -E "error|Finished"
+```
+
+### Development Tips
+
+1. **Use `cargo check` instead of `cargo build`** - Much faster, only checks compilation
+2. **Use `cargo watch`** - Auto-runs check on file changes: `cargo install cargo-watch && cargo watch -x check`
+3. **Incremental compilation** - Already enabled in `.cargo/config.toml`
+4. **Test specific modules** - `cargo test --lib gpu_instancing` to test only GPU instancing
+5. **Use release mode for final testing** - `cargo run --release` for performance testing
+
+## Kessler Syndrome Simulator (Web)
 
 A high-performance web-based 3D simulation of the Kessler syndrome - the cascading collision of space debris that could render Earth's orbital environment unusable. Built with Bevy (Rust) compiled to WebAssembly for maximum performance.
 

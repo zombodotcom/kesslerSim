@@ -3,7 +3,7 @@ pub mod physics;
 pub mod optimized_physics;
 pub mod gpu_physics;
 pub mod gpu_instancing;
-pub mod gpu_instancing_render;
+pub mod simple_gpu_render;
 pub mod collision;
 pub mod analytics;
 pub mod rendering;

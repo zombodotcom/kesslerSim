@@ -1,0 +1,18 @@
+# Cargo configuration for faster development
+[build]
+# Use incremental compilation
+incremental = true
+
+# Parallel compilation
+jobs = 4
+
+[profile.dev]
+# Faster debug builds
+opt-level = 1
+debug = true
+
+[profile.test]
+# Faster test builds
+opt-level = 1
+debug = true
+

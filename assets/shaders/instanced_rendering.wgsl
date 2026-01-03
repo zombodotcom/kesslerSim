@@ -1,6 +1,30 @@
-#import bevy_pbr::{
-    mesh_view_bindings::view,
-    forward_io::{Vertex, VertexOutput},
+// Custom instanced rendering shader for Bevy 0.16.1
+// Uses manual view uniform binding since mesh_view_bindings structure may differ
+
+// View uniform structure (matches Bevy's ViewUniform - 400 bytes total)
+// Each mat4x4<f32> is 64 bytes (16 floats * 4 bytes)
+// vec3<f32> is 12 bytes, f32 is 4 bytes
+// Total: 64*6 + 12 + 4 = 400 bytes
+struct ViewUniform {
+    view_proj: mat4x4<f32>,           // 64 bytes
+    inverse_view_proj: mat4x4<f32>,   // 64 bytes
+    view: mat4x4<f32>,                // 64 bytes
+    inverse_view: mat4x4<f32>,         // 64 bytes
+    projection: mat4x4<f32>,          // 64 bytes
+    inverse_projection: mat4x4<f32>,  // 64 bytes
+    world_position: vec3<f32>,         // 12 bytes
+    _padding: f32,                    // 4 bytes
+    // Total: 400 bytes
+}
+
+// Bind view uniform at group 0, binding 0 (matches our pipeline setup)
+@group(0) @binding(0) var<uniform> view_uniform: ViewUniform;
+
+// Simple vertex output structure
+struct VertexOutput {
+    @builtin(position) position: vec4<f32>,
+    @location(0) world_position: vec3<f32>,
+    @location(1) color: vec4<f32>,
 }
 
 // Instance data structure matching Rust InstanceData
@@ -28,9 +52,8 @@ fn vertex(
     let world_position = position * instance_scale + instance_pos;
     
     out.world_position = world_position;
-    out.position = view.view_proj * vec4<f32>(world_position, 1.0);
-    out.uv = uv;
-    out.normal = normal;
+    // Use manually bound view uniform
+    out.position = view_uniform.view_proj * vec4<f32>(world_position, 1.0);
     out.color = instance_color;
     
     return out;
